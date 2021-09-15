@@ -26,7 +26,10 @@ D1 SSD1306 displaying two DHT11's and sending results to webpage
 // Set WiFi credentials - use your credentials
 #define WIFI_SSID "BobDavis"
 #define WIFI_PASS "Teddyteddy"
-
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define OLED_RESET 0  // Normally 4 => UNO
+#define SCREEN_ADDRESS 0x3C
 #define DHTPIN D5     // Digital pin connected to the DHT sensor
 #define DHTPIN2 D6    // Digital pin connected to the DHT2 sensor
 
@@ -55,13 +58,17 @@ ESP8266WebServer webserver(80);
 // On an arduino D1:        D2(SDA),  D1(SCL)
 #define OLED_RESET    0 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C // See datasheet for Address; 0x3D=128x64, 0x3C=128x32
-Adafruit_SSD1306 display(OLED_RESET); // Works with D1 for some reason
-//Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); 
+//Adafruit_SSD1306 display(OLED_RESET); // Works with D1 for some reason
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); 
 
 void setup() {
   Serial.begin(9600);
   Serial.println(F("DHT test!"));
-  display.begin();
+  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;); // Don't proceed, loop forever
+  }
+  //display.begin();
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
